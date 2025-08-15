@@ -23,17 +23,14 @@ const inList = document.getElementById('inprogress-list');
 const wlList = document.getElementById('wishlist-list');
 const compList = document.getElementById('completed-list');
 const search = document.getElementById('search');
-const modalBack = document.getElementById('modalBack');
+const modalBack = document.getElementById('modaiBack') || document.getElementById('modaiBack'); // ID確認
 const addBtn = document.getElementById('addBtn');
 const itemForm = document.getElementById('itemForm');
 const fileInput = document.getElementById('fileInput');
 
 // form fields
 const fId = document.getElementById('itemId');
-const fSubject = document.getElementById('field-name'); // 科目選択用に変更
-const fCode = document.getElementById('field-code');
-const fTeacher = document.getElementById('field-teacher');
-const fUrl = document.getElementById('field-url');
+const fSubject = document.getElementById('field-subject'); // ← ID修正
 const fNote = document.getElementById('field-note');
 const fStatus = document.getElementById('field-status');
 const fTerm = document.getElementById('field-term');
@@ -59,7 +56,12 @@ function initializeDemoData() {
 
 // --- 科目選択リストを作成 ---
 function populateSubjectSelect() {
+  if (!fSubject) { console.error('field-subject 要素が存在しません'); return; }
+
+  // 既存の option を初期化
   fSubject.innerHTML = '<option value="">選択してください</option>';
+
+  // masterSubjects から option を生成
   masterSubjects.forEach(sub => {
     const opt = document.createElement('option');
     opt.value = sub.id;
@@ -134,19 +136,19 @@ function updateItem(id, status, data){
 }
 function removeItem(id, status){ state[status] = state[status].filter(i=> i.id!==id); save(); render(); }
 function moveItem(id, from, to){
-  const idx = state[from].findIndex(i=> i.id===id); if(idx===-1) return; const it = state[from].splice(idx,1)[0]; it.status = to; state[to].push(it); save(); render();
+  const idx = state[from].findIndex(i=>i.id===id); if(idx===-1) return; const it = state[from].splice(idx,1)[0]; it.status = to; state[to].push(it); save(); render();
 }
 
 // --- modal ---
 function openModalForNew(){ 
-  populateSubjectSelect(); // ドロップダウンを更新
+  populateSubjectSelect(); // ← モーダル開いた直後に呼ぶ
   document.getElementById('modalTitle').textContent='科目を追加'; 
   fId.value=''; fNote.value=''; fStatus.value='inprogress'; fTerm.value=''; 
   modalBack.style.display='flex'; 
 }
 
 function openModalForEdit(item,status){ 
-  populateSubjectSelect();
+  populateSubjectSelect(); // ← モーダル開いた直後に呼ぶ
   const subject = masterSubjects.find(s=>s.id===item.subjectId);
   document.getElementById('modalTitle').textContent='科目を編集'; 
   fId.value=item.id; 
