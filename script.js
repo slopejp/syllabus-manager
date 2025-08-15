@@ -15,7 +15,7 @@ function save(){localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
 function load(){
   const raw = localStorage.getItem(STORAGE_KEY);
   if(raw) state = JSON.parse(raw);
-  else initializeDemoData(); // デモ用データを初期化
+  else initializeDemoData();
 }
 
 // --- DOM参照 ---
@@ -23,14 +23,14 @@ const inList = document.getElementById('inprogress-list');
 const wlList = document.getElementById('wishlist-list');
 const compList = document.getElementById('completed-list');
 const search = document.getElementById('search');
-const modalBack = document.getElementById('modaiBack') || document.getElementById('modaiBack'); // ID確認
+const modalBack = document.getElementById('modaiBack');
 const addBtn = document.getElementById('addBtn');
 const itemForm = document.getElementById('itemForm');
 const fileInput = document.getElementById('fileInput');
 
 // form fields
 const fId = document.getElementById('itemId');
-const fSubject = document.getElementById('field-subject'); // ← ID修正
+const fSubject = document.getElementById('field-subject'); // ← 修正済み
 const fNote = document.getElementById('field-note');
 const fStatus = document.getElementById('field-status');
 const fTerm = document.getElementById('field-term');
@@ -42,26 +42,16 @@ const cComp = document.getElementById('count-comp');
 
 // --- デモ用初期化 ---
 function initializeDemoData() {
-  state.inprogress = [
-    {id:genId(), subjectId:'s1', note:''}, // 線形代数I
-  ];
-  state.wishlist = [
-    {id:genId(), subjectId:'s2', note:'月曜3限'}, // 微分方程式I
-  ];
-  state.completed = [
-    {id:genId(), subjectId:'s3', note:'A'}, // 情報リテラシー
-  ];
+  state.inprogress = [{id:genId(), subjectId:'s1', note:''}];
+  state.wishlist = [{id:genId(), subjectId:'s2', note:'月曜3限'}];
+  state.completed = [{id:genId(), subjectId:'s3', note:'A'}];
   save();
 }
 
 // --- 科目選択リストを作成 ---
 function populateSubjectSelect() {
   if (!fSubject) { console.error('field-subject 要素が存在しません'); return; }
-
-  // 既存の option を初期化
   fSubject.innerHTML = '<option value="">選択してください</option>';
-
-  // masterSubjects から option を生成
   masterSubjects.forEach(sub => {
     const opt = document.createElement('option');
     opt.value = sub.id;
@@ -111,7 +101,7 @@ function renderList(container, items, status){
     edit.onclick = ()=>{ openModalForEdit(it,status); };
 
     const del = document.createElement('button'); del.className='muted-btn small'; del.textContent='削除';
-    del.onclick = ()=>{ if(confirm('削除しますか？')){ removeItem(it.id,status); } };
+    del.onclick = ()=>{ if(confirm('削除しますか？')) removeItem(it.id,status); };
 
     const moveBtn = document.createElement('button'); moveBtn.className='small';
     if(status==='inprogress') { moveBtn.textContent='✓ 履修済みに'; moveBtn.onclick = ()=> moveItem(it.id,'inprogress','completed'); }
@@ -141,14 +131,14 @@ function moveItem(id, from, to){
 
 // --- modal ---
 function openModalForNew(){ 
-  populateSubjectSelect(); // ← モーダル開いた直後に呼ぶ
+  populateSubjectSelect();
   document.getElementById('modalTitle').textContent='科目を追加'; 
-  fId.value=''; fNote.value=''; fStatus.value='inprogress'; fTerm.value=''; 
+  fId.value=''; fSubject.value=''; fNote.value=''; fStatus.value='inprogress'; fTerm.value=''; 
   modalBack.style.display='flex'; 
 }
 
 function openModalForEdit(item,status){ 
-  populateSubjectSelect(); // ← モーダル開いた直後に呼ぶ
+  populateSubjectSelect();
   const subject = masterSubjects.find(s=>s.id===item.subjectId);
   document.getElementById('modalTitle').textContent='科目を編集'; 
   fId.value=item.id; 
@@ -199,15 +189,6 @@ fileInput.addEventListener('change', e=>{
   }; 
   reader.readAsText(f);
 });
-
-// --- utilities ---
-function findById(id){ 
-  for(const k of ['inprogress','wishlist','completed']){
-    const rr = state[k].find(x=>x.id===id); 
-    if(rr) return {item:rr, status:k}; 
-  } 
-  return null; 
-}
 
 // --- load & render ---
 load(); render();
