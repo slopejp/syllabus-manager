@@ -13,6 +13,7 @@
       <div class="controls">
         <input id="search" type="text" placeholder="科目名・科目コードで検索..."/>
         <button id="addBtn">＋追加</button>
+      </div>
     </header>
 
     <div class="grid">
@@ -30,23 +31,26 @@
         <h2 id="completed-title">✅ 履修済み <span class="tag" id="count-comp">0</span></h2>
         <ul class="list" id="completed-list"></ul>
         <input type="file" id="fileInput" style="display:none" accept="application/json" />
-        <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">データはブラウザの localStorage に保存されます</div>
+        <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">
+          データはブラウザの localStorage に保存されます
+        </div>
       </section>
     </div>
 
     <footer>
-      <button class="muted-btn"id=clearAll>🗑 全削除</button>
+      <button class="muted-btn" id="clearAll">🗑 全削除</button>
       <button class="muted-btn" id="exportBtn">💾 エクスポート</button>
       <button id="importBtn">📁 インポート</button>
     </footer>
   </div>
 
-  <!-- modal: add/edit --> <!-- modal → ポップアップウィンドウ的なやつ -->
-   <div class="modal-back" id="modaiBack">
+  <!-- modal: add/edit -->
+  <div class="modal-back" id="modalBack">
     <div class="modal" role="dialog" aria-modal="true">
       <h3 id="modalTitle">科目を追加</h3>
       <form id="itemForm">
         <input type="hidden" id="itemId" />
+        <input type="hidden" id="field-term" /> <!-- 追加 -->
 
         <!-- 科目選択型に変更 -->
         <label for="field-subject">科目名</label>
@@ -59,7 +63,7 @@
         <label for="field-note">メモ(任意)</label>
         <textarea id="field-note" rows="2"></textarea>
 
-         <!-- 状態選択 -->
+        <!-- 状態選択 -->
         <label for="field-status">状態</label>
         <div class="row">
           <select id="field-status">
@@ -68,15 +72,15 @@
             <option value="completed">履修済み</option>
           </select>
         </div>
-        
+
         <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
           <button type="submit" id="saveBtn">保存</button>
           <button type="button" id="cancelBtn" class="muted-btn">キャンセル</button>
         </div>
       </form>
     </div>
-   </div>
+  </div>
 
-   <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
