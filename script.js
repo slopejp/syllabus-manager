@@ -467,11 +467,11 @@ fileInput.addEventListener('change', e=>{
 // --- load & render ---
 load(); render();
 
-// --- 要件チェックモーダル ---
 function openCheckModal() {
   const results = document.getElementById('checkResults');
   results.innerHTML = ''; // 前回結果をクリア
 
+  // 単位集計
   const allItems = [...state.inprogress, ...state.completed];
   const groupCredit = {}; // groupごとの単位
   const subCredit = {};   // subcategoryごとの単位
@@ -487,73 +487,81 @@ function openCheckModal() {
 
   const messages = [];
 
-  // --- 総単位数チェック ---
-  const totalCredits = allItems.reduce((sum, it) => {
-    const sub = masterSubjects.find(s => s.id === it.subjectId);
-    return sum + (sub?.credit || 0);
-  }, 0);
-
-  messages.push('<h3>総単位数</h3>');
-  // 進級条件: 90単位以上
-  if (totalCredits >= 90) {
-    messages.push(`<div class="pass">✅ 進級条件: 修得総単位数 ${totalCredits}単位 (90単位以上)</div>`);
-  } else {
-    messages.push(`<div class="fail">❌ 進級条件: 修得総単位数 ${totalCredits}/90単位不足</div>`);
-  }
-  // 卒業条件: 124単位以上
-  if (totalCredits >= 124) {
-    messages.push(`<div class="pass">✅ 卒業条件: 修得総単位数 ${totalCredits}単位 (124単位以上)</div>`);
-  } else {
-    messages.push(`<div class="fail">❌ 卒業条件: 修得総単位数 ${totalCredits}/124単位不足</div>`);
-  }
-
   // --- 導入科目 ---
   messages.push('<h3>導入科目</h3>');
   if ((groupCredit['導入科目'] || 0) >= 14) {
-    messages.push(`<div class="pass">✅ 導入科目: ${groupCredit['導入科目']}単位 (14単位以上)</div>`);
+    messages.push(`<div class="pass">✅ 導入科目: ${(groupCredit['導入科目'] || 0)}/14単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 導入科目: ${(groupCredit['導入科目'] || 0)}/14単位不足</div>`);
   }
 
   // --- 基礎科目 ---
   messages.push('<h3>基礎科目</h3>');
-  const baseGroups = ['数理', '情報', '文化・思想', '社会・ネットワーク', '経済・マーケット'];
+  const baseGroups = ['数理','情報','文化・思想','社会・ネットワーク','経済・マーケット'];
   baseGroups.forEach(g => {
-    if ((subCredit[g] || 0) >= 2) messages.push(`<div class="pass">✅ ${g}: ${subCredit[g]}単位</div>`);
-    else messages.push(`<div class="fail">❌ ${g}: ${(subCredit[g] || 0)}/2単位不足</div>`);
+    if ((subCredit[g] || 0) >= 2) {
+      messages.push(`<div class="pass">✅ ${g}: ${subCredit[g]}単位</div>`);
+    } else {
+      messages.push(`<div class="fail">❌ ${g}: ${(subCredit[g] || 0)}/2単位不足</div>`);
+    }
   });
-  if ((subCredit['多言語ITコミュニケーション'] || 0) >= 2) messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']}単位</div>`);
-  else messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語ITコミュニケーション'] || 0)}/2単位不足</div>`);
-  if ((groupCredit['基礎科目'] || 0) >= 12) messages.push(`<div class="pass">✅ 基礎科目合計: ${groupCredit['基礎科目']}単位 (12単位以上)</div>`);
-  else messages.push(`<div class="fail">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12単位不足</div>`);
+  if ((subCredit['多言語ITコミュニケーション'] || 0) >= 2) {
+    messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']}単位</div>`);
+  } else {
+    messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語ITコミュニケーション'] || 0)}/2単位不足</div>`);
+  }
+  if ((groupCredit['基礎科目'] || 0) >= 12) {
+    messages.push(`<div class="pass">✅ 基礎科目合計: ${groupCredit['基礎科目']}単位</div>`);
+  } else {
+    messages.push(`<div class="fail">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12単位不足</div>`);
+  }
 
   // --- 展開科目 ---
   messages.push('<h3>展開科目</h3>');
-  if ((groupCredit['展開科目'] || 0) >= 74) messages.push(`<div class="pass">✅ 展開科目合計: ${groupCredit['展開科目']}単位 (74単位以上)</div>`);
-  else messages.push(`<div class="fail">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74単位不足</div>`);
+  if ((groupCredit['展開科目'] || 0) >= 74) {
+    messages.push(`<div class="pass">✅ 展開科目合計: ${groupCredit['展開科目']}単位</div>`);
+  } else {
+    messages.push(`<div class="fail">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74単位不足</div>`);
+  }
 
   const subCheck = [
-    { name: '基盤リテラシー科目', min: 8 },
-    { name: '多言語情報理解科目', min: 8 },
-    { name: '世界理解科目', min: 26 },
-    { name: '社会接続科目', max: 10 }
+    {name:'基盤リテラシー科目', min:8},
+    {name:'多言語情報理解科目', min:8},
+    {name:'世界理解科目', min:26},
+    {name:'社会接続科目', max:10}
   ];
   subCheck.forEach(s => {
     const val = subCredit[s.name] || 0;
-    if (s.min && val >= s.min) messages.push(`<div class="pass">✅ ${s.name}: ${val}単位</div>`);
-    if (s.min && val < s.min) messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.min}単位不足</div>`);
-    if (s.max && val <= s.max) messages.push(`<div class="pass">✅ ${s.name}: ${val}単位 (上限${s.max}以内)</div>`);
-    if (s.max && val > s.max) messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.max}単位 上限超過</div>`);
+    if (s.min) {
+      if (val >= s.min) {
+        messages.push(`<div class="pass">✅ ${s.name}: ${val}単位</div>`);
+      } else {
+        messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.min}単位不足</div>`);
+      }
+    }
+    if (s.max) {
+      if (val <= s.max) {
+        messages.push(`<div class="pass">✅ ${s.name}: ${val}単位 (上限${s.max}以内)</div>`);
+      } else {
+        messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.max}単位 上限超過</div>`);
+      }
+    }
   });
 
-  // --- デジタル産業選択必修 ---
-  if ((subCredit['デジタル産業選択必修'] || 0) >= 2) messages.push(`<div class="pass">✅ デジタル産業選択必修: ${subCredit['デジタル産業選択必修']}単位</div>`);
-  else messages.push(`<div class="fail">❌ デジタル産業選択必修: ${(subCredit['デジタル産業選択必修'] || 0)}/2単位不足</div>`);
+  // --- 世界理解科目のデジタル産業必修 ---
+  if ((subCredit['デジタル産業選択必修'] || 0) >= 2) {
+    messages.push(`<div class="pass">✅ デジタル産業選択必修: ${subCredit['デジタル産業選択必修']}単位</div>`);
+  } else {
+    messages.push(`<div class="fail">❌ デジタル産業選択必修: ${(subCredit['デジタル産業選択必修'] || 0)}/2単位不足</div>`);
+  }
 
   // --- 卒業プロジェクト科目 ---
   messages.push('<h3>卒業プロジェクト科目</h3>');
-  if ((subCredit['卒業プロジェクト科目'] || 0) >= 4) messages.push(`<div class="pass">✅ 卒業プロジェクト科目: ${subCredit['卒業プロジェクト科目']}単位</div>`);
-  else messages.push(`<div class="fail">❌ 卒業プロジェクト科目: ${(subCredit['卒業プロジェクト科目'] || 0)}/4単位不足</div>`);
+  if ((subCredit['卒業プロジェクト科目'] || 0) >= 4) {
+    messages.push(`<div class="pass">✅ 卒業プロジェクト科目: ${subCredit['卒業プロジェクト科目']}単位</div>`);
+  } else {
+    messages.push(`<div class="fail">❌ 卒業プロジェクト科目: ${(subCredit['卒業プロジェクト科目'] || 0)}/4単位不足</div>`);
+  }
 
   results.innerHTML = messages.join('');
   document.getElementById('checkModal').style.display = 'flex';
@@ -562,7 +570,3 @@ function openCheckModal() {
 function closeCheckModal() {
   document.getElementById('checkModal').style.display = 'none';
 }
-
-// --- ボタン連動 ---
-document.getElementById('checkBtn').addEventListener('click', openCheckModal);
-document.getElementById('closeCheckBtn').addEventListener('click', closeCheckModal);
