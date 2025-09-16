@@ -173,3 +173,20 @@ textarea, input[type=url], input[type=text], select {
   .grid { grid-template-columns:1fr; }
   input[type=text], select { min-width:120px; }
 }
+
+#checkModal .pass {
+  color: green;
+  margin-left: 1em;
+}
+#checkModal .fail {
+  color: red;
+  margin-left: 1em;
+}
+#checkResults {
+  margin-top: 12px;
+}
+#checkResults h3 {
+  margin: 12px 0 6px;
+  font-size: 1rem;
+  border-bottom: 1px solid #ddd;
+}

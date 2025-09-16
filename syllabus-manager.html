@@ -13,6 +13,7 @@
       <div class="controls">
         <input id="search" type="text" placeholder="科目名・科目コードで検索..."/>
         <button id="addBtn">＋追加</button>
+        <button onclick="openCheckModal()">📊 要件チェック</button>
       </div>
     </header>
 
@@ -41,8 +42,16 @@
       <button class="muted-btn" id="clearAll">🗑 全削除</button>
       <button class="muted-btn" id="exportBtn">💾 エクスポート</button>
       <button id="importBtn">📁 インポート</button>
-    </footer>
-  </div>
+      <!-- 要件チェックモーダル -->
+      <div class="modal-back" id="checkModal">
+        <div class="modal">
+          <h2>📊 進級・卒業要件チェック</h2>
+          <div id="checkResults"></div>
+          <footer>
+            <button class="muted-btn" onclick="closeCheckModal()">閉じる</button>
+          </footer>
+        </div>
+      </div>
 
   <!-- modal: add/edit -->
   <div class="modal-back" id="modalBack">
