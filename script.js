@@ -570,3 +570,9 @@ function openCheckModal() {
 function closeCheckModal() {
   document.getElementById('checkModal').style.display = 'none';
 }
+
+// --- イベント登録 ---
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('checkBtn').addEventListener('click', openCheckModal);
+  document.getElementById('closeCheckBtn').addEventListener('click', closeCheckModal);
+});
