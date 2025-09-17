@@ -571,10 +571,10 @@ function openCheckModal() {
 
   // --- 卒業プロジェクト科目 ---
   messages.push('<h3>卒業プロジェクト科目</h3>');
-  if ((categoryCredit['卒業プロジェクト科目'] || 0) >= 4) {
-    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${categoryCredit['卒業プロジェクト科目']}/4 単位</div>`);
+  if ((groupCredit['卒業プロジェクト科目'] || 0) >= 4) {
+    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${groupCredit['卒業プロジェクト科目']}/4 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 卒業プロジェクト科目合計: ${(categoryCredit['卒業プロジェクト科目'] || 0)}/4 単位</div>`);
+    messages.push(`<div class="fail">❌ 卒業プロジェクト科目合計: ${(groupCredit['卒業プロジェクト科目'] || 0)}/4 単位</div>`);
   }
 
   // === 進級要件 ===
