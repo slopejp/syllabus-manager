@@ -493,17 +493,17 @@ function openCheckModal() {
   // 総取得単位数(卒業要件)
   const totalCredits = Object.values(groupCredit).reduce((a, b) => a + b, 0);
   if (totalCredits >= 124) {
-    messages.unshif(`<div class="pass total-check">✅ 総取得単位数: ${totalCredits} (124 単位以上)</div>`);
+    messages.unshift(`<div class="pass total-check">✅ 総取得単位数: ${totalCredits} (124 単位以上)</div>`);
   } else {
-    messages.unshif(`<div class="fail total-check">❌ 総取得単位数: ${totalCredits}/124 単位不足</div>`);
+    messages.unshift(`<div class="fail total-check">❌ 総取得単位数: ${totalCredits}/124 単位不足</div>`);
   }
 
   // 導入科目
   messages.push('<h3>導入科目</h3>');
   if ((groupCredit['導入科目'] || 0) >= 14) {
-    messages.unshif(`<div class="pass">✅ ${(groupCredit['導入科目'] || 0)}/14 単位</div>`);
+    messages.unshift(`<div class="pass">✅ ${(groupCredit['導入科目'] || 0)}/14 単位</div>`);
   } else {
-    messages.unshif(`<div class="fail">❌ ${(groupCredit['導入科目'] || 0)}/14 単位不足</div>`);
+    messages.unshift(`<div class="fail">❌ ${(groupCredit['導入科目'] || 0)}/14 単位不足</div>`);
   }
 
   // 基礎科目
@@ -511,9 +511,9 @@ function openCheckModal() {
 
   // 基礎科目合計
   if ((groupCredit['基礎科目'] || 0) >= 12) {
-    messages.unshif(`<div class="pass total-check">✅ 基礎科目合計: ${groupCredit['基礎科目']} 単位</div>`);
+    messages.unshift(`<div class="pass total-check">✅ 基礎科目合計: ${groupCredit['基礎科目']} 単位</div>`);
   } else {
-    messages.unshif(`<div class="fail total-check">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位不足</div>`);
+    messages.unshift(`<div class="fail total-check">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位不足</div>`);
   }
   const baseGroups = ['数理','情報','文化・思想','社会・ネットワーク','経済・マーケット'];
   baseGroups.forEach(g => {
@@ -533,9 +533,9 @@ function openCheckModal() {
   messages.push('<h3>展開科目</h3>');
   // 展開科目合計
   if ((groupCredit['展開科目'] || 0) >= 74) {
-    messages.unshif(`<div class="pass total-check">✅ 展開科目合計: ${groupCredit['展開科目']} 単位</div>`);
+    messages.unshift(`<div class="pass total-check">✅ 展開科目合計: ${groupCredit['展開科目']} 単位</div>`);
   } else {
-    messages.unshif(`<div class="fail total-check">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74 単位不足</div>`);
+    messages.unshift(`<div class="fail total-check">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74 単位不足</div>`);
   }
 
   const subCheck = [
@@ -572,17 +572,17 @@ function openCheckModal() {
   // 卒業プロジェクト科目
   messages.push('<h3>卒業プロジェクト科目</h3>');
   if ((subCredit['卒業プロジェクト科目'] || 0) >= 4) {
-    messages.unshif(`<div class="pass total-check">✅ 卒業プロジェクト科目: ${subCredit['卒業プロジェクト科目']} 単位</div>`);
+    messages.unshift(`<div class="pass total-check">✅ 卒業プロジェクト科目: ${subCredit['卒業プロジェクト科目']} 単位</div>`);
   } else {
-    messages.unshif(`<div class="fail total-check">❌ 卒業プロジェクト科目: ${(subCredit['卒業プロジェクト科目'] || 0)}/4 単位不足</div>`);
+    messages.unshift(`<div class="fail total-check">❌ 卒業プロジェクト科目: ${(subCredit['卒業プロジェクト科目'] || 0)}/4 単位不足</div>`);
   }
 
   // === 進級要件 ===
   messages.push('<h2>📈 進級要件（4年次）</h2>');
   if (totalCredits >= 90) {
-    messages.unshif(`<div class="pass total-check">✅ 総取得単位数: ${totalCredits} (90 単位以上)</div>`);
+    messages.unshift(`<div class="pass total-check">✅ 総取得単位数: ${totalCredits} (90 単位以上)</div>`);
   } else {
-    messages.unshif(`<div class="fail total-check">❌ 総取得単位数: ${totalCredits}/90 単位不足</div>`);
+    messages.unshift(`<div class="fail total-check">❌ 総取得単位数: ${totalCredits}/90 単位不足</div>`);
   }
 
   results.innerHTML = messages.join('');
