@@ -190,13 +190,3 @@ textarea, input[type=url], input[type=text], select {
   font-size: 1rem;
   border-bottom: 1px solid #ddd;
 }
-
-/* 合計や総単位のチェック専用デザイン */
-.total-check {
-  font-weight: bold;
-  padding: 6px 10px;
-  margin: 6px 4px;
-  border-left: 4px solid #2563eb; /* 青ライン */
-  background: #f0f7ff;           /* 淡い青背景 */
-  border-radius: 6px;
-}
