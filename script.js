@@ -508,6 +508,12 @@ function openCheckModal() {
 
   // 基礎科目
   messages.push('<h3>基礎科目</h3>');
+  // 基礎科目合計
+  if ((groupCredit['基礎科目'] || 0) >= 12) {
+    messages.push(`<div class="pass total-check">✅ 基礎科目合計: ${groupCredit['基礎科目']} 単位</div>`);
+  } else {
+    messages.push(`<div class="fail total-check">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位不足</div>`);
+  }
   const baseGroups = ['数理','情報','文化・思想','社会・ネットワーク','経済・マーケット'];
   baseGroups.forEach(g => {
     if ((subCredit[g] || 0) >= 2) {
@@ -520,12 +526,6 @@ function openCheckModal() {
     messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']} 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語ITコミュニケーション'] || 0)}/2 単位不足</div>`);
-  }
-  // 基礎科目合計
-  if ((groupCredit['基礎科目'] || 0) >= 12) {
-    messages.push(`<div class="pass total-check">✅ 基礎科目合計: ${groupCredit['基礎科目']} 単位</div>`);
-  } else {
-    messages.push(`<div class="fail total-check">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位不足</div>`);
   }
 
   // 展開科目
