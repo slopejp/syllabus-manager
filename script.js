@@ -538,14 +538,14 @@ function openCheckModal() {
     messages.push(`<div class="fail">❌ 展開科目合計: ${(categoryCredit['展開科目'] || 0)}/74 単位</div>`);
   }
 
-  const subCheck = [
+  const groupCheck = [
     {name:'基盤リテラシー科目', min:8},
     {name:'多言語情報理解科目', min:8},
     {name:'世界理解科目', min:26},
     {name:'社会接続科目', max:10}
   ];
-  subCheck.forEach(s => {
-    const val = subCredit[s.name] || 0;
+  groupCheck.forEach(s => {
+    const val = groupCredit[s.name] || 0;
     if (s.min) {
       if (val >= s.min) {
         messages.push(`<div class="pass">✅ ${s.name}: ${val}/${s.min} 単位</div>`);
@@ -555,7 +555,7 @@ function openCheckModal() {
     }
     if (s.max) {
       if (val <= s.max) {
-        messages.push(`<div class="pass">✅ ${s.name}: ${val}/${s.max} 単位 (上限 ${s.max} 以内)</div>`);
+        messages.push(`<div class="pass">✅ ${s.name}: ${val}/${s.max} 単位 (上限 ${s.max} 単位)</div>`);
       } else {
         messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.max} 単位 上限超過</div>`);
       }
