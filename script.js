@@ -26,7 +26,7 @@ const masterSubjects = [
   {id:'s20', name:'企業経営', code:'BSC-1-B1-0204-013', teacher:'上山 信一', url:'https://syllabus.zen.ac.jp/subjects/2025/BSC-1-B1-0204-013', category:'基礎科目', group:'世界理解科目' ,subcategory:'経済・マーケット', credit: 2},
   {id:'s21', name:'地域アントレプレナーシップ', code:'BSC-1-B1-0204-014', teacher:'上山 信一', url:'https://syllabus.zen.ac.jp/subjects/2025/BSC-1-B1-0204-014', category:'基礎科目', group:'世界理解科目' ,subcategory:'経済・マーケット', credit: 2},
   {id:'s22', name:'地域課題の解決とイノベーション', code:'HIS101', teacher:'上山 信一,瀬下 翔太', url:'https://syllabus.zen.ac.jp/subjects/2025/BSC-1-B1-0204-015', category:'基礎科目', group:'世界理解科目' ,subcategory:'経済・マーケット', credit: 2},
-  {id:'s23', name:'多言語ITコミュニケーション', code:'BSC-1-A2-1234-016', teacher:'田岡 恵,吉村 総一郎,Hernández Álvaro David,大野 元己,竹内 薫', url:'https://syllabus.zen.ac.jp/subjects/2025/BSC-1-A2-1234-016', category:'基礎科目', group:'多言語情報理解科目' ,subcategory:'多言語情報理解', credit: 2},
+  {id:'s23', name:'多言語ITコミュニケーション', code:'BSC-1-A2-1234-016', teacher:'田岡 恵,吉村 総一郎,Hernández Álvaro David,大野 元己,竹内 薫', url:'https://syllabus.zen.ac.jp/subjects/2025/BSC-1-A2-1234-016', category:'基礎科目', group:'多言語情報理解科目' ,subcategory:'多言語情報理解必修', credit: 2},
   {id:'s24', name:'ビジュアルプログラミング', code:'INF-1-C1-1030-001', teacher:'ガーバー 明菜', url:'https://syllabus.zen.ac.jp/subjects/2025/INF-1-C1-1030-001', category:'展開科目', group:'基盤リテラシー科目' ,subcategory:'情報', credit: 2},
   {id:'s25', name:'Webアプリケーション開発1', code:'INF-1-C1-1030-002', teacher:'折原 ダビデ竜', url:'https://syllabus.zen.ac.jp/subjects/2025/INF-1-C1-1030-002', category:'展開科目', group:'基盤リテラシー科目' ,subcategory:'情報', credit: 2},
   {id:'s26', name:'Webアプリケーション開発2', code:'INF-1-C1-0204-003', teacher:'折原 ダビデ竜', url:'https://syllabus.zen.ac.jp/subjects/2025/INF-1-C1-0204-003', category:'展開科目', group:'基盤リテラシー科目' ,subcategory:'情報', credit: 2},
@@ -473,14 +473,17 @@ function openCheckModal() {
 
   // 単位集計
   const allItems = [...state.inprogress, ...state.completed];
+  const categoryCredit = {}; // categoryごとの単位
   const groupCredit = {}; // groupごとの単位
   const subCredit = {};   // subcategoryごとの単位
 
   allItems.forEach(it => {
     const sub = masterSubjects.find(s => s.id === it.subjectId);
     if (!sub) return;
-    const g = sub.group || '未分類';
-    const sg = sub.subcategory || '未分類';
+    const cat = sub.category || '未分類';        // category（大分類）
+    const g = sub.group || '未分類';             // group（中分類）
+    const sg = sub.subcategory || '未分類';      // subcategory（小分類）
+    categoryCredit[cat] = (categoryCredit[cat] || 0) + (sub.credit || 0);
     groupCredit[g] = (groupCredit[g] || 0) + (sub.credit || 0);
     subCredit[sg] = (subCredit[sg] || 0) + (sub.credit || 0);
   });
@@ -491,7 +494,7 @@ function openCheckModal() {
   messages.push('<h2>🎓 卒業要件</h2>');
 
   // 総取得単位数
-  const totalCredits = Object.values(groupCredit).reduce((a, b) => a + b, 0);
+  const totalCredits = Object.values(categoryCredit).reduce((a, b) => a + b, 0);
   if (totalCredits >= 124) {
     messages.push(`<div class="pass">✅ 総取得単位数: ${totalCredits}/124 単位</div>`);
   } else {
@@ -500,10 +503,10 @@ function openCheckModal() {
 
   // --- 導入科目 ---
   messages.push('<h3>導入科目</h3>');
-  if ((groupCredit['導入科目'] || 0) >= 14) {
-    messages.push(`<div class="pass">✅ 基礎科目合計: ${(groupCredit['導入科目'] || 0)}/14 単位</div>`);
+  if ((categoryCredit['導入科目'] || 0) >= 14) {
+    messages.push(`<div class="pass">✅ 基礎科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 基礎科目合計: ${(groupCredit['導入科目'] || 0)}/14 単位</div>`);
+    messages.push(`<div class="fail">❌ 基礎科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
   }
 
   // --- 基礎科目 ---
@@ -516,23 +519,23 @@ function openCheckModal() {
       messages.push(`<div class="fail">❌ ${g}: ${(subCredit[g] || 0)}/2 単位</div>`);
     }
   });
-  if ((subCredit['多言語ITコミュニケーション'] || 0) >= 2) {
-    messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']}/2 単位</div>`);
+  if ((subCredit['多言語情報理解必修'] || 0) >= 2) {
+    messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語情報理解必修']}/2 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語ITコミュニケーション'] || 0)}/2 単位</div>`);
+    messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語情報理解必修'] || 0)}/2 単位</div>`);
   }
-  if ((groupCredit['基礎科目'] || 0) >= 12) {
-    messages.push(`<div class="pass">✅ 基礎科目合計: ${groupCredit['基礎科目']}/12 単位</div>`);
+  if ((categoryCredit['基礎科目'] || 0) >= 12) {
+    messages.push(`<div class="pass">✅ 基礎科目合計: ${categoryCredit['基礎科目']}/12 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位</div>`);
+    messages.push(`<div class="fail">❌ 基礎科目合計: ${(categoryCredit['基礎科目'] || 0)}/12 単位</div>`);
   }
 
   // --- 展開科目 ---
   messages.push('<h3>展開科目</h3>');
-  if ((groupCredit['展開科目'] || 0) >= 74) {
-    messages.push(`<div class="pass">✅ 展開科目合計: ${groupCredit['展開科目']}/74 単位</div>`);
+  if ((categoryCredit['展開科目'] || 0) >= 74) {
+    messages.push(`<div class="pass">✅ 展開科目合計: ${categoryCredit['展開科目']}/74 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74 単位</div>`);
+    messages.push(`<div class="fail">❌ 展開科目合計: ${(categoryCredit['展開科目'] || 0)}/74 単位</div>`);
   }
 
   const subCheck = [
@@ -568,10 +571,10 @@ function openCheckModal() {
 
   // --- 卒業プロジェクト科目 ---
   messages.push('<h3>卒業プロジェクト科目</h3>');
-  if ((subCredit['卒業プロジェクト科目'] || 0) >= 4) {
-    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${subCredit['卒業プロジェクト科目']}/4 単位</div>`);
+  if ((categoryCredit['卒業プロジェクト科目'] || 0) >= 4) {
+    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${categoryCredit['卒業プロジェクト科目']}/4 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 卒業プロジェクト科目合計: ${(subCredit['卒業プロジェクト科目'] || 0)}/4 単位</div>`);
+    messages.push(`<div class="fail">❌ 卒業プロジェクト科目合計: ${(categoryCredit['卒業プロジェクト科目'] || 0)}/4 単位</div>`);
   }
 
   // === 進級要件 ===
