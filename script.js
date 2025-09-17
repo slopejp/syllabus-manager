@@ -493,7 +493,7 @@ function openCheckModal() {
   // 総取得単位数
   const totalCredits = Object.values(groupCredit).reduce((a, b) => a + b, 0);
   if (totalCredits >= 124) {
-    messages.push(`<div class="pass">✅ 総取得単位数: ${totalCredits} (124 単位以上)</div>`);
+    messages.push(`<div class="pass">✅ 総取得単位数: ${totalCredits}/124 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 総取得単位数: ${totalCredits}/124 単位</div>`);
   }
@@ -511,18 +511,18 @@ function openCheckModal() {
   const baseGroups = ['数理','情報','文化・思想','社会・ネットワーク','経済・マーケット'];
   baseGroups.forEach(g => {
     if ((subCredit[g] || 0) >= 2) {
-      messages.push(`<div class="pass">✅ ${g}: ${subCredit[g]} 単位</div>`);
+      messages.push(`<div class="pass">✅ ${g}: ${subCredit[g]}/2 単位</div>`);
     } else {
       messages.push(`<div class="fail">❌ ${g}: ${(subCredit[g] || 0)}/2 単位</div>`);
     }
   });
   if ((subCredit['多言語ITコミュニケーション'] || 0) >= 2) {
-    messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']} 単位</div>`);
+    messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語ITコミュニケーション']}/2 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 多言語ITコミュニケーション: ${(subCredit['多言語ITコミュニケーション'] || 0)}/2 単位</div>`);
   }
   if ((groupCredit['基礎科目'] || 0) >= 12) {
-    messages.push(`<div class="pass">✅ 基礎科目合計: ${groupCredit['基礎科目']} 単位</div>`);
+    messages.push(`<div class="pass">✅ 基礎科目合計: ${groupCredit['基礎科目']}/12 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 基礎科目合計: ${(groupCredit['基礎科目'] || 0)}/12 単位</div>`);
   }
@@ -530,7 +530,7 @@ function openCheckModal() {
   // --- 展開科目 ---
   messages.push('<h3>展開科目</h3>');
   if ((groupCredit['展開科目'] || 0) >= 74) {
-    messages.push(`<div class="pass">✅ 展開科目合計: ${groupCredit['展開科目']} 単位</div>`);
+    messages.push(`<div class="pass">✅ 展開科目合計: ${groupCredit['展開科目']}/74 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 展開科目合計: ${(groupCredit['展開科目'] || 0)}/74 単位</div>`);
   }
@@ -545,14 +545,14 @@ function openCheckModal() {
     const val = subCredit[s.name] || 0;
     if (s.min) {
       if (val >= s.min) {
-        messages.push(`<div class="pass">✅ ${s.name}: ${val} 単位</div>`);
+        messages.push(`<div class="pass">✅ ${s.name}: ${val}/${s.min} 単位</div>`);
       } else {
         messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.min} 単位</div>`);
       }
     }
     if (s.max) {
       if (val <= s.max) {
-        messages.push(`<div class="pass">✅ ${s.name}: ${val} 単位 (上限 ${s.max} 以内)</div>`);
+        messages.push(`<div class="pass">✅ ${s.name}: ${val}/${s.max} 単位 (上限 ${s.max} 以内)</div>`);
       } else {
         messages.push(`<div class="fail">❌ ${s.name}: ${val}/${s.max} 単位 上限超過</div>`);
       }
@@ -561,7 +561,7 @@ function openCheckModal() {
 
   // --- 世界理解科目のデジタル産業必修 ---
   if ((subCredit['デジタル産業選択必修'] || 0) >= 2) {
-    messages.push(`<div class="pass">✅ デジタル産業選択必修: ${subCredit['デジタル産業選択必修']} 単位</div>`);
+    messages.push(`<div class="pass">✅ デジタル産業選択必修: ${subCredit['デジタル産業選択必修']}/2 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ デジタル産業選択必修: ${(subCredit['デジタル産業選択必修'] || 0)}/2 単位</div>`);
   }
@@ -569,7 +569,7 @@ function openCheckModal() {
   // --- 卒業プロジェクト科目 ---
   messages.push('<h3>卒業プロジェクト科目</h3>');
   if ((subCredit['卒業プロジェクト科目'] || 0) >= 4) {
-    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${subCredit['卒業プロジェクト科目']} 単位</div>`);
+    messages.push(`<div class="pass">✅ 卒業プロジェクト科目合計: ${subCredit['卒業プロジェクト科目']}/4 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 卒業プロジェクト科目合計: ${(subCredit['卒業プロジェクト科目'] || 0)}/4 単位</div>`);
   }
@@ -577,7 +577,7 @@ function openCheckModal() {
   // === 進級要件 ===
   messages.push('<h2>📈 進級要件（4年次）</h2>');
   if (totalCredits >= 90) {
-    messages.push(`<div class="pass">✅ 総取得単位数: ${totalCredits} (90 単位以上)</div>`);
+    messages.push(`<div class="pass">✅ 総取得単位数: ${totalCredits}/90 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 総取得単位数: ${totalCredits}/90 単位</div>`);
   }
