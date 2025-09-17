@@ -504,9 +504,9 @@ function openCheckModal() {
   // --- 導入科目 ---
   messages.push('<h3>導入科目</h3>');
   if ((categoryCredit['導入科目'] || 0) >= 14) {
-    messages.push(`<div class="pass">✅ 基礎科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
+    messages.push(`<div class="pass">✅ 導入科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
   } else {
-    messages.push(`<div class="fail">❌ 基礎科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
+    messages.push(`<div class="fail">❌ 導入科目合計: ${(categoryCredit['導入科目'] || 0)}/14 単位</div>`);
   }
 
   // --- 基礎科目 ---
