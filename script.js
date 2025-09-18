@@ -471,21 +471,44 @@ function openCheckModal() {
   const results = document.getElementById('checkResults');
   results.innerHTML = ''; // 前回結果をクリア
 
+  // --- 上限制御ルール ---
+  const groupMax = { '社会接続科目': 10 };
+
+  function addCreditWithLimit(name, credit, targetObj) {
+    const max = groupMax[name];
+    if (!max) {
+      targetObj[name] = (targetObj[name] || 0) + credit;
+      return credit;
+    } else {
+      const current = targetObj[name] || 0;
+      const newVal = Math.min(current + credit, max);
+      targetObj[name] = newVal;
+      return newVal - current; // 実際に加算できた分だけ返す
+    }
+  }
+
   // 単位集計
   const allItems = [...state.inprogress, ...state.completed];
-  const categoryCredit = {}; // categoryごとの単位
-  const groupCredit = {}; // groupごとの単位
-  const subCredit = {};   // subcategoryごとの単位
+  const categoryCredit = {}; // categoryごとの単位（上限制御済み）
+  const groupCredit = {};    // groupごとの単位（上限制御済み）
+  const subCredit = {};      // subcategoryごとの単位（上限制御済み）
+  const subRaw = {};         // 実際の履修数（表示用）
 
   allItems.forEach(it => {
     const sub = masterSubjects.find(s => s.id === it.subjectId);
     if (!sub) return;
     const cat = sub.category || '未分類';        // category（大分類）
-    const g = sub.group || '未分類';             // group（中分類）
-    const sg = sub.subcategory || '未分類';      // subcategory（小分類）
-    categoryCredit[cat] = (categoryCredit[cat] || 0) + (sub.credit || 0);
-    groupCredit[g] = (groupCredit[g] || 0) + (sub.credit || 0);
-    subCredit[sg] = (subCredit[sg] || 0) + (sub.credit || 0);
+    const g   = sub.group || '未分類';           // group（中分類）
+    const sg  = sub.subcategory || '未分類';     // subcategory（小分類）
+    const credit = sub.credit || 0;
+
+    // 実数（表示用）
+    subRaw[sg] = (subRaw[sg] || 0) + credit;
+
+    // 上限制御を通して集計
+    addCreditWithLimit(cat, credit, categoryCredit);
+    addCreditWithLimit(g, credit, groupCredit);
+    addCreditWithLimit(sg, credit, subCredit);
   });
 
   const messages = [];
@@ -511,11 +534,12 @@ function openCheckModal() {
 
   // --- 基礎科目 ---
   messages.push('<h3>基礎科目</h3>');
-    if ((categoryCredit['基礎科目'] || 0) >= 12) {
+  if ((categoryCredit['基礎科目'] || 0) >= 12) {
     messages.push(`<div class="pass">✅ 基礎科目合計: ${categoryCredit['基礎科目']}/12 単位</div>`);
   } else {
     messages.push(`<div class="fail">❌ 基礎科目合計: ${(categoryCredit['基礎科目'] || 0)}/12 単位</div>`);
   }
+
   const baseGroups = ['数理','情報','文化・思想','社会・ネットワーク','経済・マーケット'];
   baseGroups.forEach(g => {
     if ((subCredit[g] || 0) >= 2) {
@@ -524,6 +548,7 @@ function openCheckModal() {
       messages.push(`<div class="fail">❌ ${g}: ${(subCredit[g] || 0)}/2 単位</div>`);
     }
   });
+
   if ((subCredit['多言語情報理解必修'] || 0) >= 2) {
     messages.push(`<div class="pass">✅ 多言語ITコミュニケーション: ${subCredit['多言語情報理解必修']}/2 単位</div>`);
   } else {
@@ -563,10 +588,32 @@ function openCheckModal() {
   });
 
   // --- 世界理解科目のデジタル産業必修 ---
-  if ((subCredit['デジタル産業選択必修'] || 0) >= 2) {
-    messages.push(`<div class="pass">✅ デジタル産業選択必修: ${subCredit['デジタル産業選択必修']}/2 単位</div>`);
-  } else {
-    messages.push(`<div class="fail">❌ デジタル産業選択必修: ${(subCredit['デジタル産業選択必修'] || 0)}/2 単位</div>`);
+  {
+    const actual = subRaw['デジタル産業必修'] || 0;    // 実際の履修数
+    const counted = subCredit['デジタル産業必修'] || 0; // 上限制御後（判定用）
+    const limit = groupMax['社会接続科目'] || null;
+
+    if (counted >= 2) {
+      if (limit && actual > limit) {
+        messages.push(
+          `<div class="pass">✅ デジタル産業必修: ${actual}/${limit} 単位 （上限 ${limit} まで有効, 判定には ${counted} 単位で計算）</div>`
+        );
+      } else {
+        messages.push(
+          `<div class="pass">✅ デジタル産業必修: ${actual} 単位</div>`
+        );
+      }
+    } else {
+      if (limit && actual > limit) {
+        messages.push(
+          `<div class="fail">❌ デジタル産業必修: ${actual}/${limit} 単位 （上限 ${limit} まで有効, 判定には ${counted} 単位で計算）</div>`
+        );
+      } else {
+        messages.push(
+          `<div class="fail">❌ デジタル産業必修: ${actual} 単位</div>`
+        );
+      }
+    }
   }
 
   // --- 卒業プロジェクト科目 ---
