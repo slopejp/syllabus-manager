@@ -365,8 +365,13 @@ function renderList(container, items, status){
     title.innerHTML = `<strong>${escapeHtml(subject.name||'')}</strong> <span class="meta">${escapeHtml(subject.code||'')}</span>`;
     const meta = document.createElement('div'); 
     meta.className='meta'; 
-    meta.textContent = (subject.teacher?subject.teacher+' • ':'') + (it.note||'');
-    left.appendChild(title); left.appendChild(meta);
+    let metaText = subject.teacher || '';
+    if (it.note && it.note.trim() !== '') {
+      metaText += (metaText ? ' • ' : '') + it.note;
+    }
+    meta.textContent = metaText;
+    left.appendChild(title); 
+    left.appendChild(meta);
 
     const actions = document.createElement('div'); actions.className='actions';
     const open = document.createElement('button'); open.className='muted-btn small'; open.textContent='開く▶';
@@ -524,7 +529,10 @@ function openCheckModal() {
   const messages = [];
 
   // メッセージ生成
-  function makeMessage(ok, label, val, required, extra = '') {
+  function makeMessage(ok, label, val, required, extra = '', type = 'pass') {
+    if (type === 'warn') {
+      return `<div class="warn">⚠️ ${label}: ${val}/${required} 単位${extra}</div>`;
+    }
     return ok
       ? `<div class="pass">✅ ${label}: ${val}/${required} 単位${extra}</div>`
       : `<div class="fail">❌ ${label}: ${val}/${required} 単位${extra}</div>`;
@@ -589,10 +597,12 @@ function openCheckModal() {
       messages.push(makeMessage(val >= rule.min, rule.label || rule.key, val, rule.min));
     }
     if (rule.max !== undefined) {
-      const raw = groupRaw[rule.key] || 0;
-      const ok = val <= rule.max;
-      const extra = ok ? ` (上限 ${rule.max} 単位)` : ' 上限超過';
-      messages.push(makeMessage(ok, rule.label || rule.key, raw, rule.max, extra));
+      const raw = groupRaw[rule.key] || 0;   // 実履修数
+      if (raw <= rule.max) {
+        messages.push(makeMessage(true, rule.label || rule.key, raw, rule.max, ` (上限 ${rule.max} 単位)`));
+      } else {
+        messages.push(makeMessage(false, rule.label || rule.key, raw, rule.max, ' 上限超過', 'warn'));
+      }
     }
   });
 

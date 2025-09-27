@@ -54,10 +54,10 @@ button {
 }
 
 .grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-top:16px;
+  display: grid;
+  grid-template-columns: 1fr; /* 1列に */
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .card {
@@ -182,6 +182,11 @@ textarea, input[type=url], input[type=text], select {
   color: red;
   margin-left: 1em;
 }
+#checkModal .warn {
+  color: #d97706; /* 濃いオレンジで視認性を確保 */
+  margin-left: 1em;
+}
+
 #checkResults {
   margin-top: 12px;
 }
