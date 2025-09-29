@@ -303,6 +303,13 @@ const modalBack = document.getElementById('modalBack');
 const addBtn = document.getElementById('addBtn');
 const itemForm = document.getElementById('itemForm');
 const fileInput = document.getElementById('fileInput');
+const subjectSearch = document.getElementById('subjectSearch');
+if (subjectSearch) {
+  subjectSearch.addEventListener('input', e => {
+    populateSubjectSelect(e.target.value);
+  });
+}
+
 
 // form fields
 const fId = document.getElementById('itemId');
@@ -324,10 +331,34 @@ function initializeDemoData() {
 }
 
 // --- 科目選択リストを作成 ---
-function populateSubjectSelect() {
-  if (!fSubject) { console.error('field-subject 要素が存在しません'); return; }
+function populateSubjectSelect(filter = '') {
+  if (!fSubject) { 
+    console.error('field-subject 要素が存在しません'); 
+    return; 
+  }
+
+  // 初期化
   fSubject.innerHTML = '<option value="">選択してください</option>';
-  masterSubjects.forEach(sub => {
+
+  const q = filter.trim().toLowerCase();
+
+  const filtered = masterSubjects.filter(s =>
+    !q ||
+    (s.name && s.name.toLowerCase().includes(q)) ||
+    (s.code && s.code.toLowerCase().includes(q)) ||
+    (s.teacher && s.teacher.toLowerCase().includes(q))
+  );
+
+  if (filtered.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = '一致する科目がありません';
+    opt.disabled = true;   // ✅ 選択できない
+    fSubject.appendChild(opt);
+    return;
+  }
+
+  filtered.forEach(sub => {
     const opt = document.createElement('option');
     opt.value = sub.id;
     opt.textContent = `${sub.name} (${sub.code})`;
@@ -411,14 +442,23 @@ function moveItem(id, from, to){
 
 // --- modal ---
 function openModalForNew(){ 
+  // 検索欄をリセットして全件表示
+  if (subjectSearch) subjectSearch.value = '';
   populateSubjectSelect();
+
   document.getElementById('modalTitle').textContent='科目を追加'; 
-  fId.value=''; fSubject.value=''; fNote.value=''; fStatus.value='inprogress';
+  fId.value='';
+  fSubject.value='';
+  fNote.value='';
+  fStatus.value='inprogress';
   modalBack.style.display='flex'; 
 }
 
 function openModalForEdit(item,status){ 
+  // 検索欄をリセットして全件表示
+  if (subjectSearch) subjectSearch.value = '';
   populateSubjectSelect();
+
   const subject = masterSubjects.find(s=>s.id===item.subjectId);
   document.getElementById('modalTitle').textContent='科目を編集'; 
   fId.value=item.id; 
