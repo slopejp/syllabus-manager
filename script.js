@@ -430,9 +430,23 @@ function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c=>({'&':'&amp;',
 
 // --- CRUD ---
 function addItem(obj){ obj.id = genId(); state[obj.status].push(obj); save(); render(); }
-function updateItem(id, status, data){
-  ['inprogress','wishlist','completed'].forEach(list=> state[list] = state[list].filter(i=> i.id!==id));
-  state[data.status].push(Object.assign({id},data));
+function updateItem(id, status, data) {
+  // 元のアイテムがどのリストのどの位置にあるか探す
+  let foundList = null;
+  let foundIndex = -1;
+  ['inprogress', 'wishlist', 'completed'].forEach(list => {
+    const idx = state[list].findIndex(i => i.id === id);
+    if (idx !== -1) { foundList = list; foundIndex = idx; }
+  });
+
+  if (foundList === data.status) {
+    // ステータスが変わっていない場合は、同じ位置のデータを上書きする
+    state[foundList][foundIndex] = Object.assign({ id }, data);
+  } else {
+    // ステータスが変わった場合は、元の場所から消して新しいリストの末尾に追加
+    if (foundList) state[foundList].splice(foundIndex, 1);
+    state[data.status].push(Object.assign({ id }, data));
+  }
   save(); render();
 }
 function removeItem(id, status){ state[status] = state[status].filter(i=> i.id!==id); save(); render(); }
@@ -503,7 +517,15 @@ fileInput.addEventListener('change', e=>{
   reader.onload = ()=>{
     try{ 
       const parsed = JSON.parse(reader.result); 
-      state = parsed; save(); render(); alert('インポートしました'); 
+      // 必要なプロパティが配列として存在するかチェック
+       if (Array.isArray(parsed.inprogress) && Array.isArray(parsed.wishlist) && Array.isArray(parsed.completed)) {
+        state = parsed; 
+        save(); 
+        render(); 
+        alert('インポートしました'); 
+      } else {
+        alert('読み込み失敗: 正しいシラバスデータではありません');
+      }
     }catch(err){ alert('読み込み失敗: JSONではありません'); }
   }; 
   reader.readAsText(f);
@@ -550,9 +572,9 @@ function collectCredits(allItems) {
     const appliedCredit = addCreditWithLimit(groupName, creditValue, groupCredit);
     categoryCredit[categoryName] = (categoryCredit[categoryName] || 0) + appliedCredit;
 
-    if (categoryName === '基礎科目') {
-      subCredit[subcategoryName] = (subCredit[subcategoryName] || 0) + appliedCredit;
-    }
+    // if文での制限を外し、すべてのサブカテゴリで上限適用後の単位を集計する
+    subCredit[subcategoryName] = (subCredit[subcategoryName] || 0) + appliedCredit;
+
   });
 
   return { categoryCredit, groupCredit, subCredit, groupRaw, subRaw };
